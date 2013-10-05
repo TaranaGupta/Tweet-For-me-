@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Make a tweet choice</title>
+
+    <style type="text/css">
+      body {
+        display: block;
+        width: 700px;
+        padding-left: 10px;
+        margin: 20px;
+        font-family: 'Helvetica Neue',Helvetica, sans-serif;
+
+      }
+
+      h1, h2, h3, h4, h5, h6, p {
+      font-family: 'Helvetica Neue',Helvetica, sans-serif;
+      font-weight: 100;
+      color: Black;
+      }
+
+      h1 {font-size:48px; /*text-shadow: 1px 2px 3px #192449;*/color: #555; border-bottom: 1px solid #ccc; }
+
+      h2 {font-size:28px; font-style:normal; color: #555; }
+
+      p {color: #121212; font-weight:normal; font-size:20px;}
+
+
+       #choice {
+        font-size: 20px;
+        line-height: 1.5em;
+        font-family: "Helvetica Neue";
+        font-weight: 100;
+         }
+
+       .choice {margin: 20px; }
+
+      input[type="text"] {
+        padding: 0px;
+        font: normal 24px Helvetica, sans-serif;
+        color: #555;
+        text-transform: uppercase;
+      }
+
+      #mytwitter{margin-top:20px; padding-top: 10px;}
+      
+    </style>
+
+
+
+
+  </head>
+
+
+ 
+  <body>
+      <h1>Tweet For Me</h1>
+      <h2>Type a word of your choice and let google tweet for me.</h2>
+      <p id = "word"> </p>
+      
+         <!-- <form action="http://itp.nyu.edu/~tg1047/sinatra/week1/hello" method="GET"> -->
+<div id="choice" class="choice">
+  <form name="input" action="" method="get">
+      Add your word choice here <input type="text" maxlength="10" name="your_word_choice">
+<!--input type="submit" value="Submit"-->
+<INPUT TYPE="button" NAME="button" Value="submit" onClick="displayWord()">
+</form>
+</div>
+
+<div id="mytwitter">
+<a class="twitter-timeline" href="https://twitter.com/ChooweetForMe" data-widget-id="381928729569542146">Tweets by @ChooweetForMe</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+
+</div>
+
+<div id="searchcontrol"></div>
+
+
+  <script type="text/javascript" src="sha1.js"></script>
+  <script type="text/javascript" src="codebird.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+  <script src="https://www.google.com/jsapi" type="text/javascript"></script>
+
+  <script type="text/javascript">
+
+  //lib for posting on twitter
+  var cb = new Codebird;
+  cb.setConsumerKey("p4SR1WJHNhleOf6HOxqqw", "E5vg6m5Lv4cB9zPMnuNUmyeMRX2J3rFDpEkpcrA");
+  cb.setToken("1895397410-2lyKTR189nXgm3CXFYCbJgRdVBKfKMHhjYgc0aw", "QAq42JJFU6NfkD204e92g8udkVYwyXFViuGLQR0nf1Q");
+
+  //initializing class for google search
+  google.load('search', '1');
+
+
+  //search results will be saved here.
+  var wordSearch = null;
+  //seacrh word 
+  var searchWord = "Why is world awesome?";
+  
+  //google.setOnLoadCallback(OnLoad);
+
+  function SearchGoogle() {
+
+      // Create a search control
+      //var searchControl = new google.search.SearchControl();
+      //wordSearch = new google.search.SearchControl();
+      //wordSearch = new google.search.WebSearch();
+      wordSearch = new google.search.NewsSearch(); //.NewsSearch();//.WebSearch();
+      
+      // Add in a full set of searchers
+      //var localSearch = new google.search.LocalSearch();
+      //searchControl.addSearcher(localSearch);
+      //searchControl.addSearcher(new google.search.LocalSearch());
+      //searchControl.addSearcher(new google.search.WebSearch());
+      //searchControl.addSearcher(new google.search.VideoSearch());
+      //searchControl.addSearcher(new google.search.BlogSearch());
+      //searchControl.addSearcher(new google.search.NewsSearch());
+      //searchControl.addSearcher(new google.search.ImageSearch());
+      //searchControl.addSearcher(new google.search.BookSearch());
+      //searchControl.addSearcher(new google.search.PatentSearch());
+      //alert(searchWord);
+      // Set the Local Search center point
+      //localSearch.setCenterPoint("New York, NY");
+      wordSearch.setSearchCompleteCallback(this, searchComplete, null);
+
+      // tell the searcher to draw itself and tell it where to attach
+      //searchControl.draw(document.getElementById("searchcontrol"));
+      //searchControl.setOnKeepCallback(this, MyKeepHandler);
+
+      // execute an inital search
+      //searchControl.execute(searchWord);
+      wordSearch.execute(searchWord);
+
+    }
+    
+
+function searchComplete() {
+  if (wordSearch.results && wordSearch.results.length > 0) {
+    var topSearchUrl = wordSearch.results[0].content;//.url;
+    //alert(wordSearch.results[0].text);
+    //alert(topSearchUrl);
+
+    //var twitterPost = topSearchUrl + " #" + searchWord;
+    //truncating the post to 140 charaters
+    //twitterPost = twitterPost.substring(3,139) + "'...'";
+    //var twitterPost = topSearchUrl.substring(0,124) + "... #" + searchWord;
+    var twitterPost = topSearchUrl.substring(0,100) + "... #" + searchWord +" #socialHacking";
+    //alert(twitterPost);
+    cb.__call(
+          "statuses_update",
+          {"status": twitterPost},
+          function (reply) {
+              // ...
+          }
+    );
+
+  }
+}
+
+
+
+
+
+
+    function displayWord()
+    {
+        //alert("Welcome " + document.forms["input"]["your_word_choice"].value + "!")
+        //taking the input from form
+        searchWord =  document.forms["input"]["your_word_choice"].value; 
+        
+        //changing the html displayed
+        var dword = document.getElementById('word');
+        dword.innerHTML = "Thanks for choosing " + searchWord + " for me.";
+        //dword.innerHTML = "Thanks for participating. Your word choice is: " + searchWord;
+        //dword.innerHTML = "Test";
+
+        //searching on google and posting the url on twitter
+        SearchGoogle(searchWord);
+
+        //var res = document.getElementById('searchcontrol');
+        //alert(res.innerHTML);
+        //res.innerHTML = "";
+
+ 
+
+        
+    } 
+      
+  </script>
+
+ 
+  </body>
+</html>  
